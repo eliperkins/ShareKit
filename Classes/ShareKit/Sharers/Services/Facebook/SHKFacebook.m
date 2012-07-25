@@ -210,6 +210,7 @@ static NSString *const kSHKFacebookUserInfo =@"kSHKFacebookUserInfo";
 {			
  	if (![self validateItem])
 		return NO;
+    
 	NSMutableDictionary *params = [NSMutableDictionary dictionary];
 	NSString *actions = [NSString stringWithFormat:@"{\"name\":\"%@ %@\",\"link\":\"%@\"}",
 				SHKLocalizedString(@"Get"), SHKCONFIG(appName), SHKCONFIG(appURL)];
@@ -244,16 +245,25 @@ static NSString *const kSHKFacebookUserInfo =@"kSHKFacebookUserInfo";
         [self retain]; //must retain, because FBConnect does not retain its delegates. Released in callback.
         return YES;
 	}	
-	else if (item.shareType == SHKShareTypeImage && item.image)
+	else if (item.shareType == SHKShareTypeImage && (item.image || item.imageURL))
 	{	
 		if (item.title) 
-			[params setObject:item.title forKey:@"caption"];
+			[params setObject:item.title forKey:@"name"];
 		if (item.text) 
-			[params setObject:item.text forKey:@"message"];
-		[params setObject:item.image forKey:@"picture"];
-		// There does not appear to be a way to add the photo 
-		// via the dialog option:
-		[[SHKFacebook facebook] requestWithGraphPath:@"me/photos"
+			[params setObject:item.text forKey:@"caption"];
+        if (item.description) 
+            [params setObject:item.fbDescription forKey:@"description"];
+//        if (item.actionName) 
+//            [params setObject:[NSString stringWithFormat:@"[{\"%@\":\"%@\",\"%@\":\"%@\"}]", @"name", item
+//             [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:item.actionName, @"name", item.actionName, @"link", nil]] forKey:@"actions"];
+        if (item.imageURL)
+            [params setObject:item.imageURL forKey:@"picture"];
+        if (item.redirectLink)
+            [params setObject:item.redirectLink forKey:@"link"];
+        
+        NSLog(@"FB me/feed params: %@", params);
+        
+        [[SHKFacebook facebook] requestWithGraphPath:@"me/feed"
 										   andParams:params
 									   andHttpMethod:@"POST"
 										 andDelegate:self];
@@ -266,11 +276,10 @@ static NSString *const kSHKFacebookUserInfo =@"kSHKFacebookUserInfo";
         [[SHKFacebook facebook] requestWithGraphPath:@"me" andDelegate:self];
         [self retain]; //must retain, because FBConnect does not retain its delegates. Released in callback.
         return YES;
-    } 
-	else 
+    } else {
 		// There is nothing to send
 		return NO;
-	
+	}
 	[[SHKFacebook facebook] dialog:@"feed"
 						 andParams:params 
 					   andDelegate:self];

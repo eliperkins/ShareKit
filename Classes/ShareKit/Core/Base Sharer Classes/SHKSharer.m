@@ -610,7 +610,7 @@
 			return (item.URL != nil);
 			
 		case SHKShareTypeImage:
-			return (item.image != nil);
+			return ((item.image || item.imageURL) != NO);
 			
 		case SHKShareTypeText:
 			return (item.text != nil);

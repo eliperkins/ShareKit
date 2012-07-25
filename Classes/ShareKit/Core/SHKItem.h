@@ -81,6 +81,13 @@ typedef enum
 @property (nonatomic, retain)	NSString *mimeType;
 @property (nonatomic, retain)	NSString *filename;
 
+@property (nonatomic, retain)	NSString *imageURL;
+@property (nonatomic, retain)	NSString *redirectLink;
+@property (nonatomic, retain)	NSString *fbDescription;
+@property (nonatomic, retain)	NSString *actionLink;
+@property (nonatomic, retain)	NSString *actionName;
+
+
 /*** creation methods ***/
 
 /* always use these for SHKItem object creation, as they implicitly set appropriate SHKShareType. Items without SHKShareType will not be shared! */
@@ -93,6 +100,13 @@ typedef enum
 + (id)image:(UIImage *)image title:(NSString *)title;
 + (id)text:(NSString *)text;
 + (id)file:(NSData *)data filename:(NSString *)filename mimeType:(NSString *)mimeType title:(NSString *)title;
++ (id)recipe:(NSString *)name 
+     caption:(NSString *)caption 
+ description:(NSString *)description 
+    imageURL:(NSString *)imageURL 
+redirectLink:(NSString *)redirectLink
+  actionLink:(NSString *)actionLink
+  actionName:(NSString *)actionName;
 
 /*** custom value methods ***/
 

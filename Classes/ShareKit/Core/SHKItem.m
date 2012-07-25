@@ -48,6 +48,12 @@
 @synthesize mailBody, mailJPGQuality, mailToRecipients, isMailHTML, mailShareWithAppSignature;
 @synthesize facebookURLSharePictureURI, facebookURLShareDescription;
 
+@synthesize imageURL;
+@synthesize redirectLink;
+@synthesize fbDescription;
+@synthesize actionLink;
+@synthesize actionName;
+
 - (void)dealloc
 {
 	[URL release];
@@ -68,7 +74,13 @@
     [mailToRecipients release];
     [facebookURLSharePictureURI release];
     [facebookURLShareDescription release];
-	
+    
+	[imageURL release];
+    [redirectLink release];
+    [actionLink release];
+    [actionName release];
+    [fbDescription release];
+    
 	[super dealloc];
 }
 
@@ -95,6 +107,26 @@
     
     facebookURLShareDescription = [SHKCONFIG(facebookURLShareDescription) retain];
     facebookURLSharePictureURI = [SHKCONFIG(facebookURLSharePictureURI) retain];
+}
++ (id)recipe:(NSString *)name 
+     caption:(NSString *)caption 
+ description:(NSString *)description 
+    imageURL:(NSString *)imageURL 
+redirectLink:(NSString *)redirectLink
+  actionLink:(NSString *)actionLink
+  actionName:(NSString *)actionName
+{
+    SHKItem *item = [[self alloc] init];
+    item.title = name;
+    item.text = caption;
+    item.fbDescription = description;
+    item.imageURL = imageURL;
+    item.redirectLink = redirectLink;
+    item.actionLink = actionLink;
+    item.actionName = actionName;
+    item.shareType = SHKShareTypeImage;
+    
+    return [item autorelease];
 }
 
 + (id)URL:(NSURL *)url
